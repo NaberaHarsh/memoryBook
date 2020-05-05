@@ -8,7 +8,7 @@ import { Button } from '@material-ui/core';
 
 const styles = theme => ({
     paper1: {
-        marginTop: theme.spacing(6),
+        marginTop: theme.spacing(4),
         marginBottom: theme.spacing(8),
         display: "flex",
         flexDirection: "column",
@@ -26,8 +26,8 @@ const styles = theme => ({
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        height: 140,
-        width: 600
+        height: 120,
+        width: 560
 
 
     }
