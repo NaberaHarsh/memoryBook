@@ -55,6 +55,7 @@ class ImageUpload extends React.Component {
             this.props.addFile(accepted);
             this.setState({ warningMsg: "" });
             console.log(accepted[0].preview);
+            this.props.getImage(accepted[0].preview)
 
             var blobPromise = new Promise((resolve, reject) => {
                 const reader = new window.FileReader();

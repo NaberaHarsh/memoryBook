@@ -6,7 +6,7 @@ import DragAndDrop from './drag&drop';
 import TextField from '@material-ui/core/TextField';
 import { Button } from '@material-ui/core';
 import CopyrightIcon from '@material-ui/icons/Copyright';
-
+import axios from 'axios';
 
 const styles = theme => ({
     paper: {
@@ -65,8 +65,8 @@ class Post extends React.Component {
         super();
         this.state = {
             image: " ",
-            title: [],
-            description:[],
+            title:"",
+            description:"",
             count:1,
             page:[{
                 title:[],
@@ -75,19 +75,20 @@ class Post extends React.Component {
 
         }
         this.getImage = this.getImage.bind(this);
-
+this.handleSubmit=this.handleSubmit.bind(this);
     }
 
 
     getImage(image) {
         this.setState({ image: image })
     }
-    // handleChange = e => {
-    //     const { name, value } = e.target
-    //     this.setState({
-    //         [name]: value
-    //     })
-    // }
+    handleChange = e => {
+        const { name, value } = e.target
+    
+        this.setState({
+            [name]: value
+        })
+    }
     addPage= e =>{
         this.setState({ count: this.state.count + 1 })
         e.preventDefault()
@@ -95,15 +96,26 @@ let pages= this.state.page.concat([this.state.count]);
 this.setState({page:pages});
       }
 
-      handleChange =  ( index , event)=> {
-        const { name, value } = event.target
+    //   handleChange =  ( index , event)=> {
+    //     const { name, value } = event.target
 
-        let options = this.state.page;
-        options[index] = value;
-        this.setState({
-            page: options
-        })
-        console.log(this.state.page)
+    //     let options = this.state.page;
+    //     options[index] = value;
+    //     this.setState({
+    //         page: options
+    //     })
+    //     console.log(this.state.page)
+    // }
+
+    handleSubmit(){
+        const {image,title,description}=this.state;
+        const userData={image:image,title:title,description:description}
+    
+    axios.post("http://localhost:8080/content",userData)
+    .then((res)=>{
+        console.log(res);
+        console.log("hello");
+    })
     }
 
     render() {
@@ -132,8 +144,8 @@ this.setState({page:pages});
           autoComplete="title"
           variant="outlined"
           name="title"
-          value={title[index]}
-          onChange={(event)=>this.handleChange(index,event)}
+        //   value={title}
+          onChange={(e)=>this.handleChange(e)}
         />
         <TextField
           id="description"
@@ -144,10 +156,10 @@ this.setState({page:pages});
           autoComplete="description"
           variant="outlined"
           name="description"
-          value={description[index]}
+        //   value={description}
           multiline={true}
           rows={3}
-          onChange={(event)=>this.handleChange(index,event)}
+          onChange={(e)=>this.handleChange(e)}
 
         />
         
@@ -163,6 +175,11 @@ this.setState({page:pages});
                                     onClick={this.addPage}
                                     style={{ fontSize: "12px", width: '90%' }}                  >
                                     Add Page</Button>
+                                    <br/>
+                                    <Button variant='contained' color='primary'
+                                    onClick={this.handleSubmit}
+                                    style={{ fontSize: "12px", width: '90%' }}                  >
+                                    Submit</Button>
                                     </div>
                     </Paper>
 

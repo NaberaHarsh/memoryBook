@@ -11,8 +11,9 @@ class DragAndDrop extends React.Component {
         this.state.files.forEach(file => URL.revokeObjectURL(file.preview));
     }
 
+    
+
     addFile = file => {
-        this.props.getImage(file)
         console.log(file);
         this.setState({
             files: file.map(file =>
@@ -26,7 +27,7 @@ class DragAndDrop extends React.Component {
     render() {
         return (
             <div>
-                <ImageUpload addFile={this.addFile} files={this.state.files} />
+                <ImageUpload addFile={this.addFile} getImage={this.props.getImage} files={this.state.files} />
             </div>
         );
     }
