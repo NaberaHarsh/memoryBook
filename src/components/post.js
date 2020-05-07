@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { PureComponenet } from 'react';
+import jsPdf from "jspdf";
 import Container from '@material-ui/core/Container';
 import Paper from '@material-ui/core/Paper';
 import { withStyles } from "@material-ui/core/styles";
 import DragAndDrop from './drag&drop';
 import TextField from '@material-ui/core/TextField';
-import { Button } from '@material-ui/core';
+import { Button, Grid } from '@material-ui/core';
 import CopyrightIcon from '@material-ui/icons/Copyright';
 import axios from 'axios';
+import saveAs from 'file-saver'
 
 const styles = theme => ({
     paper: {
@@ -65,8 +67,8 @@ class Post extends React.Component {
         super();
         this.state = {
             image: " ",
-            title:"",
-            description:"",
+            title:" ",
+            description:" ",
             count:1,
             page:[{
                 title:[],
@@ -82,9 +84,8 @@ this.handleSubmit=this.handleSubmit.bind(this);
     getImage(image) {
         this.setState({ image: image })
     }
-    handleChange = e => {
+    handleChange = (e,index) => {
         const { name, value } = e.target
-    
         this.setState({
             [name]: value
         })
@@ -108,14 +109,30 @@ this.setState({page:pages});
     // }
 
     handleSubmit(){
-        const {image,title,description}=this.state;
-        const userData={image:image,title:title,description:description}
+        const {count,image,title,description,}=this.state;
+        const userData={pageNo:count,image:image,title:title,description:description}
     
     axios.post("http://localhost:8080/content",userData)
     .then((res)=>{
         console.log(res);
         console.log("hello");
     })
+    }
+
+    generatePDF=()=>{
+        const {count,image,title,description,}=this.state;
+        const userData={count,image,title,description}
+    
+        axios.post('/create-pdf',userData)
+        .then(()=> axios.get('/fetch-pdf',{responseType:'blob' }))
+        .catch((err)=>{
+            console.log("error has come");
+        })
+        .then((res)=>{
+            const pdfBlob=new Blob([res.data], { type:'applicatio/pdf' });
+            saveAs(pdfBlob, 'memoryBook.pdf');
+        })
+
     }
 
     render() {
@@ -145,7 +162,7 @@ this.setState({page:pages});
           variant="outlined"
           name="title"
         //   value={title}
-          onChange={(e)=>this.handleChange(e)}
+          onChange={(e)=>this.handleChange(e,index)}
         />
         <TextField
           id="description"
@@ -159,7 +176,7 @@ this.setState({page:pages});
         //   value={description}
           multiline={true}
           rows={3}
-          onChange={(e)=>this.handleChange(e)}
+          onChange={(e)=>this.handleChange(e,index)}
 
         />
         
@@ -170,17 +187,31 @@ this.setState({page:pages});
                         </span>
                         ))}
                         <br></br>
-                        <div style={{textAlign:"center"}}>
+                        <Grid container spacing={0}>
+                            <Grid md={6} lg={6} sm={6} xs={6}>
+                            <div style={{textAlign:"center"}}>
                         <Button variant='contained' color='primary'
-                                    onClick={this.addPage}
-                                    style={{ fontSize: "12px", width: '90%' }}                  >
-                                    Add Page</Button>
-                                    <br/>
+                                    onClick={(e)=>{this.addPage(e) ; this.handleSubmit(e)}}
+                                    style={{ fontSize: "12px", width: '80%' }}                  >
+                                    Save and Add new page</Button>
+                                    {/* <br/> */}
+                                    </div>
+                            </Grid>
+                            <Grid md={6} lg={6} sm={6} xs={6}>
+                            <div style={{textAlign:"center"}}>
                                     <Button variant='contained' color='primary'
                                     onClick={this.handleSubmit}
-                                    style={{ fontSize: "12px", width: '90%' }}                  >
-                                    Submit</Button>
-                                    </div>
+                                    style={{ fontSize: "12px", width: '80%' }}                  >
+                                    Final Submit</Button>
+                                    </div> 
+                            </Grid>
+                        </Grid>
+                        <div style={{textAlign:"center"}}>
+                                    <Button variant='contained' color='primary'
+                                    onClick={this.generatePDF}
+                                    style={{ fontSize: "12px", width: '80%' }}                  >
+                                    generate PDF</Button>
+                                    </div>                         
                     </Paper>
 
                 </Container>
