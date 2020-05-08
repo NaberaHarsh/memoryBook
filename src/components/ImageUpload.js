@@ -3,6 +3,9 @@ import Dropzone from "react-dropzone";
 import { withStyles } from "@material-ui/core/styles";
 import AddAPhotoIcon from '@material-ui/icons/AddAPhoto';
 import { Button } from '@material-ui/core';
+import axios from 'axios';
+// import * as firebase from 'firebase/app';
+
 
 
 
@@ -39,13 +42,14 @@ class ImageUpload extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
+            photo:{},
             warningMsg: "",
             image: props.files
         }
         this.deleteImage = this.deleteImage.bind(this)
     }
 
-
+       
 
     onDrop = (accepted, rejected) => {
         if (Object.keys(rejected).length !== 0) {
@@ -54,8 +58,20 @@ class ImageUpload extends React.Component {
         } else {
             this.props.addFile(accepted);
             this.setState({ warningMsg: "" });
-            console.log(accepted[0].preview);
-            this.props.getImage(accepted[0].preview)
+            console.log(accepted[0]);
+
+        //     console.log(accepted[0])
+        //     let fd = new FormData()
+        //   fd.append("file",accepted[0])
+        //    axios.post("https://loclhost:8080/createpdf",fd,{headers:{
+        //     'Content-Type': "multipart/form-data"
+        //   }}).then((res)=>{
+        //     this.setState({
+        //       photo:res.data
+        //     })
+        //   })
+            // this.props.firebaseImage(accepted);
+          this.props.getImage(accepted[0].preview)
 
             var blobPromise = new Promise((resolve, reject) => {
                 const reader = new window.FileReader();

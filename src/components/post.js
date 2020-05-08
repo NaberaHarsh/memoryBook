@@ -8,7 +8,9 @@ import TextField from '@material-ui/core/TextField';
 import { Button, Grid } from '@material-ui/core';
 import CopyrightIcon from '@material-ui/icons/Copyright';
 import axios from 'axios';
-import saveAs from 'file-saver'
+import saveAs from 'file-saver';
+// import * as firebase from 'firebase/app';
+
 
 const styles = theme => ({
     paper: {
@@ -62,6 +64,17 @@ const styles = theme => ({
     }
 })
 
+// var firebaseConfig = {
+//     apiKey: "AIzaSyB99ZMQiexnzEjcTdgGug0ZfnOz968UYlc",
+//     authDomain: "memory-book-ecf89.firebaseapp.com",
+//     databaseURL: "https://memory-book-ecf89.firebaseio.com",
+//     projectId: "memory-book-ecf89",
+//     storageBucket: "memory-book-ecf89.appspot.com",
+//     messagingSenderId: "473816955063",
+//     appId: "1:473816955063:web:519e43801cd2acb5d0f532"
+//   };
+//   firebase.initializeApp(firebaseConfig);
+
 class Post extends React.Component {
     constructor(props) {
         super();
@@ -78,8 +91,10 @@ class Post extends React.Component {
         }
         this.getImage = this.getImage.bind(this);
 this.handleSubmit=this.handleSubmit.bind(this);
+this.generatePDF=this.generatePDF.bind(this);
     }
 
+    
 
     getImage(image) {
         this.setState({ image: image })
@@ -119,17 +134,28 @@ this.setState({page:pages});
     })
     }
 
+    // fileUploadFirebase(e){
+    //     console.log(e.target.files[0])
+    //     var storageRef = firebase.storage().ref();
+        
+    //     // Create a reference to 'images/mountains.jpg'
+    //     var mountainImagesRef = storageRef.child('images/mountains.jpg');
+     
+    //     mountainImagesRef.put(e.target.files[0]).then(function(snapshot) {
+    //       console.log('Uploaded a blob or file!');
+    //     });
+    //    }
+
     generatePDF=()=>{
         const {count,image,title,description,}=this.state;
-        const userData={count,image,title,description}
+        const userData={pageNo:count,image:image,title:title,description:description}
     
-        axios.post('/create-pdf',userData)
-        .then(()=> axios.get('/fetch-pdf',{responseType:'blob' }))
-        .catch((err)=>{
-            console.log("error has come");
-        })
+        axios.post('http://localhost:8080/createpdf',userData)
+        .then(()=> axios.get('http://localhost:8080/fetchpdf',{responseType:'blob' }))
         .then((res)=>{
             const pdfBlob=new Blob([res.data], { type:'applicatio/pdf' });
+            // const fileURL = URL.createObjectURL(pdfBlob);
+            // window.open(fileURL);
             saveAs(pdfBlob, 'memoryBook.pdf');
         })
 
@@ -137,7 +163,6 @@ this.setState({page:pages});
 
     render() {
         const { classes } = this.props;
-        const {title, description} = this.state;
         return (
             <div>
 
@@ -149,9 +174,10 @@ this.setState({page:pages});
                         <div className={classes.contain} >
                             <Paper variant='outlined' style={{ width: "90%" }} >
                                 <div>
-                                    <DragAndDrop getImage={this.getImage} />
+                                    <DragAndDrop getImage={this.getImage}  />
                                 </div>
                                 <form>
+                                    
                                 <TextField
           id="title"
           margin="normal"

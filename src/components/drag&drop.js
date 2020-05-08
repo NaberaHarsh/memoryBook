@@ -1,5 +1,6 @@
 import React from "react";
 import ImageUpload from "./ImageUpload";
+// import * as firebase from 'firebase/app';
 
 class DragAndDrop extends React.Component {
     state = {
@@ -27,7 +28,7 @@ class DragAndDrop extends React.Component {
     render() {
         return (
             <div>
-                <ImageUpload addFile={this.addFile} getImage={this.props.getImage} files={this.state.files} />
+                <ImageUpload addFile={this.addFile} getImage={this.props.getImage}  files={this.state.files} />
             </div>
         );
     }
