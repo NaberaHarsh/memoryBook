@@ -9,23 +9,32 @@ import { Button, Grid } from '@material-ui/core';
 import CopyrightIcon from '@material-ui/icons/Copyright';
 import axios from 'axios';
 import saveAs from 'file-saver';
+import html2canvas from 'html2canvas';  
+import Divider from '@material-ui/core/Divider';
+import Dialog from '@material-ui/core/Dialog';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogActions from '@material-ui/core/DialogActions';
+
 // import * as firebase from 'firebase/app';
 
 
 const styles = theme => ({
     paper: {
-        marginTop: theme.spacing(8),
-        marginBottom: theme.spacing(8),
+        marginTop: theme.spacing(0),
+        marginBottom: theme.spacing(0),
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
+        width:400
 
     },
     contain1: {
         marginTop: theme.spacing(0),
         display: "flex",
         flexDirection: "column",
-        alignItems: "center"
+        alignItems: "initial",
+        width:500
     },
     contain: {
         marginTop: theme.spacing(2),
@@ -82,19 +91,37 @@ class Post extends React.Component {
             image: " ",
             title:" ",
             description:" ",
+            open:false,
             count:1,
             page:[{
                 title:[],
                 description:[]
-            }]
+            }],
+            productData:[]
 
         }
         this.getImage = this.getImage.bind(this);
 this.handleSubmit=this.handleSubmit.bind(this);
 this.generatePDF=this.generatePDF.bind(this);
+this.handleOpen=this.handleOpen.bind(this);
     }
 
-    
+    handleOpen() {
+        axios.get('http://localhost:8080/getContent').then(response => {  
+            console.log(response.data);  
+            this.setState({  
+              productData: response.data  
+            });  
+            this.setState({ open: true })
+          });
+        
+    }
+
+    handleClose = () => {
+        this.setState({ open: false })
+        // this.props.forTab(this.props.unit)
+
+    };
 
     getImage(image) {
         this.setState({ image: image })
@@ -147,17 +174,21 @@ this.setState({page:pages});
     //    }
 
     generatePDF=()=>{
-        const {count,image,title,description,}=this.state;
-        const userData={pageNo:count,image:image,title:title,description:description}
-    
-        axios.post('http://localhost:8080/createpdf',userData)
-        .then(()=> axios.get('http://localhost:8080/fetchpdf',{responseType:'blob' }))
-        .then((res)=>{
-            const pdfBlob=new Blob([res.data], { type:'applicatio/pdf' });
-            // const fileURL = URL.createObjectURL(pdfBlob);
-            // window.open(fileURL);
-            saveAs(pdfBlob, 'memoryBook.pdf');
-        })
+
+        const input = document.getElementById('pdfdiv');  
+        html2canvas(input)  
+          .then((canvas) => {  
+            var imgWidth = 200;  
+            var pageHeight = 290;  
+            var imgHeight = canvas.height * imgWidth / canvas.width;  
+            var heightLeft = imgHeight;  
+            const imgData = canvas.toDataURL('image/png');  
+            const pdf = new jsPdf('p', 'pt', 'a4')  
+            var position = 0;  
+            var heightLeft = imgHeight;  
+            pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);  
+            pdf.save("download.pdf");  
+          });
 
     }
 
@@ -219,7 +250,7 @@ this.setState({page:pages});
                         <Button variant='contained' color='primary'
                                     onClick={(e)=>{this.addPage(e) ; this.handleSubmit(e)}}
                                     style={{ fontSize: "12px", width: '80%' }}                  >
-                                    Save and Add new page</Button>
+                                 Add new page</Button>
                                     {/* <br/> */}
                                     </div>
                             </Grid>
@@ -232,16 +263,55 @@ this.setState({page:pages});
                                     </div> 
                             </Grid>
                         </Grid>
-                        <div style={{textAlign:"center"}}>
+                        <div style={{textAlign:"center", paddingTop:'10px'}}>
                                     <Button variant='contained' color='primary'
-                                    onClick={this.generatePDF}
-                                    style={{ fontSize: "12px", width: '80%' }}                  >
-                                    generate PDF</Button>
+                                    onClick={this.handleOpen}
+                                    style={{ fontSize: "12px", width: '90%' }}                  >
+                                    Preview</Button>
                                     </div>                         
                     </Paper>
 
                 </Container>
+                
                 <CopyrightIcon /><span style={{verticalAlign:"super"}}>harshnabera</span>
+                <Dialog onClose={this.handleClose} className={classes.root} aria-labelledby="customized-dialog-title" open={this.state.open}>
+                    <DialogTitle id="customized-dialog-title" onClose={this.handleClose}>
+                        Your memory book
+                    </DialogTitle>
+                    <DialogContent dividers>
+                    <div id="pdfdiv">
+                        
+                    {this.state.productData.map((p)=>{
+                        return(
+                            <Paper className={classes.paper}>
+                        <h1>{p.title}</h1>
+                        <img src={p.image} maxWidth="200px" height="200px"></img>
+                    <p style={{paddingLeft:'20px', paddingRight:'20px', textAlign:'justify'}}>{p.description}</p>
+                    <fotter>{p.pageNo}</fotter>
+                    </Paper>
+                    )
+                    })}
+                    
+                </div>
+                    </DialogContent>
+                    <DialogActions>
+                        <Grid container spacing={0}>
+                        <Grid md={6} lg={6} sm={6} xs={6}>
+                        <Button variant='contained' color='primary'
+                                    onClick={this.generatePDF}
+                                    style={{ fontSize: "12px", width: '90%' }}                  >
+                                    Download PDF</Button>
+                                    </Grid>
+                                    <Grid md={6} lg={6} sm={6} xs={6}>
+                        <Button variant='contained' color='primary'
+                                    onClick={this.handleClose}
+                                    style={{ fontSize: "12px", width: '90%' }}                  >
+                                    Close</Button>
+                                    </Grid>
+                        </Grid>
+                    </DialogActions>
+                </Dialog>
+
             </div>
         )
     }

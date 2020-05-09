@@ -46,10 +46,9 @@ class ImageUpload extends React.Component {
             warningMsg: "",
             image: props.files
         }
-        this.deleteImage = this.deleteImage.bind(this)
+        this.deleteImage = this.deleteImage.bind(this);
     }
-
-       
+    
 
     onDrop = (accepted, rejected) => {
         if (Object.keys(rejected).length !== 0) {
@@ -60,16 +59,18 @@ class ImageUpload extends React.Component {
             this.setState({ warningMsg: "" });
             console.log(accepted[0]);
 
-        //     console.log(accepted[0])
-        //     let fd = new FormData()
-        //   fd.append("file",accepted[0])
-        //    axios.post("https://loclhost:8080/createpdf",fd,{headers:{
-        //     'Content-Type': "multipart/form-data"
-        //   }}).then((res)=>{
-        //     this.setState({
-        //       photo:res.data
-        //     })
-        //   })
+            console.log(accepted[0])
+    let fd = new FormData()
+  fd.append("file",accepted[0])
+   axios.post('http://localhost:8080/profile',fd,{headers:{
+    'Content-Type': "application/json"
+  }}).then((res)=>{
+    this.setState({
+      photo:res.data
+    })
+    console.log(res.data)
+  })
+            
             // this.props.firebaseImage(accepted);
           this.props.getImage(accepted[0].preview)
 
@@ -129,7 +130,6 @@ class ImageUpload extends React.Component {
         return (
             <div style={{ border: 'dashed #C3C9C6 2px' }}>
                 <p>{this.state.warningMsg}</p>
-
                 <Dropzone
                     className={Object.keys(files).length !== 0 ? classes.paper2 : classes.paper1}
                     multiple={false}
