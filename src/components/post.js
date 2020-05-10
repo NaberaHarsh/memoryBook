@@ -15,7 +15,6 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions';
-
 // import * as firebase from 'firebase/app';
 
 
@@ -161,32 +160,54 @@ this.setState({page:pages});
     })
     }
 
-    // fileUploadFirebase(e){
-    //     console.log(e.target.files[0])
-    //     var storageRef = firebase.storage().ref();
-        
-    //     // Create a reference to 'images/mountains.jpg'
-    //     var mountainImagesRef = storageRef.child('images/mountains.jpg');
-     
-    //     mountainImagesRef.put(e.target.files[0]).then(function(snapshot) {
-    //       console.log('Uploaded a blob or file!');
-    //     });
-    //    }
-
+   
+    
     generatePDF=()=>{
+        var div=document.querySelector("#pdfdiv")
+        const pdf = new jsPdf('p', 'mm', 'a4')  
+var imageData;
+        var img = new Image();
+            img.addEventListener('load', function() {
+                
+                pdf.addImage(img, 'png', 10, 50);
+            });
+            img.src = '../../public/logo192.png';
 
         const input = document.getElementById('pdfdiv');  
         html2canvas(input)  
           .then((canvas) => {  
-            var imgWidth = 200;  
-            var pageHeight = 290;  
-            var imgHeight = canvas.height * imgWidth / canvas.width;  
-            var heightLeft = imgHeight;  
+            const pdf = new jsPdf('p', 'mm', 'a4')  
+            var img = new Image();
+
+            {this.state.productData.map((p)=>{
+                return(
+<div >
+
+{pdf.text(p.title,pdf.internal.pageSize.getWidth()/2,10,{align:"center"})}
+{pdf.text(p.description,10,100,{align:"justify"})}
+
+{pdf.addPage()}
+</div>
+
+  )
+                
+                
+                
+            })}
+            
+            
+
+            var width = pdf.internal.pageSize.width;    
+            var height = pdf.internal.pageSize.height;
+            var options = {
+                 pagesplit: true
+            };
+            var h1=50;
+            var aspectwidth1= (height-h1)*(9/16);
             const imgData = canvas.toDataURL('image/png');  
-            const pdf = new jsPdf('p', 'pt', 'a4')  
             var position = 0;  
-            var heightLeft = imgHeight;  
-            pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);  
+              
+            pdf.addImage(imgData, 'JPEG', 10, h1, aspectwidth1, (height-h1));  
             pdf.save("download.pdf");  
           });
 
