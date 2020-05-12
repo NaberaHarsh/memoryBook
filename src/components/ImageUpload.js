@@ -42,11 +42,12 @@ class ImageUpload extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            photo:{},
+            photo:" ",
             warningMsg: "",
             image: props.files
         }
         this.deleteImage = this.deleteImage.bind(this);
+
     }
     
 
@@ -68,11 +69,20 @@ class ImageUpload extends React.Component {
     this.setState({
       photo:res.data
     })
-    console.log(res.data)
+    console.log(res.data);
+    // this.props.getImage(res.data)
   })
             
             // this.props.firebaseImage(accepted);
-          this.props.getImage(accepted[0].preview)
+            this.props.getImage(accepted[0].preview);
+          
+            var blob=new Blob([accepted [0].name],{type:'text/html'});
+            var reader = new FileReader();
+            reader.onDrop = function () {
+                var b64 = reader.result.replace(/^data:.+;base64,/, '');
+                console.log(b64); 
+            }
+            // this.props.getBlob(b64);
 
             var blobPromise = new Promise((resolve, reject) => {
                 const reader = new window.FileReader();

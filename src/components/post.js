@@ -164,7 +164,8 @@ this.setState({page:pages});
     
     generatePDF=()=>{
         var div=document.querySelector("#pdfdiv")
-        const pdf = new jsPdf('p', 'mm', 'a4')  
+        const pdf = new jsPdf('p', 'mm', 'letter')  
+        
 var imageData;
         var img = new Image();
             img.addEventListener('load', function() {
@@ -178,14 +179,17 @@ var imageData;
           .then((canvas) => {  
             const pdf = new jsPdf('p', 'mm', 'a4')  
             var img = new Image();
-
+            // var splitText = pdf.splitTextToSize(text, 250);
+            // var y = 20;
+            var splitTitle;
             {this.state.productData.map((p)=>{
                 return(
 <div >
+{splitTitle = pdf.splitTextToSize(p.description,200)}
 
 {pdf.text(p.title,pdf.internal.pageSize.getWidth()/2,10,{align:"center"})}
-{pdf.text(p.description,10,100,{align:"justify"})}
 
+{pdf.text(splitTitle,10,100,{align:"justify"})}
 {pdf.addPage()}
 </div>
 
