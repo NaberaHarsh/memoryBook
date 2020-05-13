@@ -28,7 +28,7 @@ class DragAndDrop extends React.Component {
     render() {
         return (
             <div>
-                <ImageUpload addFile={this.addFile} getImage={this.props.getImage}  files={this.state.files} />
+                <ImageUpload addFile={this.addFile} getImageName={this.props.getImageName} getImage={this.props.getImage}  files={this.state.files} />
             </div>
         );
     }

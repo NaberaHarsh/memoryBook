@@ -15,6 +15,8 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions';
+var base64Img = require('base64-img')
+
 // import * as firebase from 'firebase/app';
 
 
@@ -87,6 +89,7 @@ class Post extends React.Component {
     constructor(props) {
         super();
         this.state = {
+            imgData:" ",
             image: " ",
             title:" ",
             description:" ",
@@ -103,6 +106,7 @@ class Post extends React.Component {
 this.handleSubmit=this.handleSubmit.bind(this);
 this.generatePDF=this.generatePDF.bind(this);
 this.handleOpen=this.handleOpen.bind(this);
+this.getImageName=this.getImageName.bind(this);
     }
 
     handleOpen() {
@@ -125,6 +129,11 @@ this.handleOpen=this.handleOpen.bind(this);
     getImage(image) {
         this.setState({ image: image })
     }
+    getImageName(name) {
+        this.setState({ imgData: name })
+        console.log(this.state.imgData)
+    }
+
     handleChange = (e,index) => {
         const { name, value } = e.target
         this.setState({
@@ -150,8 +159,8 @@ this.setState({page:pages});
     // }
 
     handleSubmit(){
-        const {count,image,title,description,}=this.state;
-        const userData={pageNo:count,image:image,title:title,description:description}
+        const {count,image,title,description,imgData}=this.state;
+        const userData={pageNo:count,image:image,title:title,description:description,imgData:imgData}
     
     axios.post("http://localhost:8080/content",userData)
     .then((res)=>{
@@ -163,33 +172,26 @@ this.setState({page:pages});
    
     
     generatePDF=()=>{
-        var div=document.querySelector("#pdfdiv")
-        const pdf = new jsPdf('p', 'mm', 'letter')  
+var imgData;
         
-var imageData;
-        var img = new Image();
-            img.addEventListener('load', function() {
-                
-                pdf.addImage(img, 'png', 10, 50);
-            });
-            img.src = '../../public/logo192.png';
-
+        
         const input = document.getElementById('pdfdiv');  
         html2canvas(input)  
           .then((canvas) => {  
             const pdf = new jsPdf('p', 'mm', 'a4')  
             var img = new Image();
-            // var splitText = pdf.splitTextToSize(text, 250);
-            // var y = 20;
+            
             var splitTitle;
             {this.state.productData.map((p)=>{
                 return(
 <div >
+    {imgData=p.imgData}
 {splitTitle = pdf.splitTextToSize(p.description,200)}
-
-{pdf.text(p.title,pdf.internal.pageSize.getWidth()/2,10,{align:"center"})}
-
-{pdf.text(splitTitle,10,100,{align:"justify"})}
+{pdf.setFontSize(24)}
+{pdf.text(p.title,pdf.internal.pageSize.getWidth()/2,15,{align:"center"})}
+{pdf.addImage(imgData,65,30,80,60,{align:"center"},)}
+{pdf.setFontSize(14)}
+{pdf.text(splitTitle,15,110,{maxWidth: 180, align:"justify"})}
 {pdf.addPage()}
 </div>
 
@@ -197,21 +199,7 @@ var imageData;
                 
                 
                 
-            })}
-            
-            
-
-            var width = pdf.internal.pageSize.width;    
-            var height = pdf.internal.pageSize.height;
-            var options = {
-                 pagesplit: true
-            };
-            var h1=50;
-            var aspectwidth1= (height-h1)*(9/16);
-            const imgData = canvas.toDataURL('image/png');  
-            var position = 0;  
-              
-            pdf.addImage(imgData, 'JPEG', 10, h1, aspectwidth1, (height-h1));  
+            })}  
             pdf.save("download.pdf");  
           });
 
@@ -230,7 +218,7 @@ var imageData;
                         <div className={classes.contain} >
                             <Paper variant='outlined' style={{ width: "90%" }} >
                                 <div>
-                                    <DragAndDrop getImage={this.getImage}  />
+                                    <DragAndDrop getImage={this.getImage} getImageName={this.getImageName}  />
                                 </div>
                                 <form>
                                     
@@ -310,7 +298,7 @@ var imageData;
                         return(
                             <Paper className={classes.paper}>
                         <h1>{p.title}</h1>
-                        <img src={p.image} maxWidth="200px" height="200px"></img>
+                        <img src={`${p.image}`} maxWidth="200px" height="200px"></img>
                     <p style={{paddingLeft:'20px', paddingRight:'20px', textAlign:'justify'}}>{p.description}</p>
                     <fotter>{p.pageNo}</fotter>
                     </Paper>

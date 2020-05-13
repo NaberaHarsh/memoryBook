@@ -64,24 +64,21 @@ class ImageUpload extends React.Component {
     let fd = new FormData()
   fd.append("file",accepted[0])
    axios.post('http://localhost:8080/profile',fd,{headers:{
-    'Content-Type': "application/json"
+    'Content-Type': "multipart/form-data"
   }}).then((res)=>{
     this.setState({
       photo:res.data
     })
     console.log(res.data);
+    this.props.getImageName(res.data)
+
     // this.props.getImage(res.data)
   })
             
             // this.props.firebaseImage(accepted);
             this.props.getImage(accepted[0].preview);
           
-            var blob=new Blob([accepted [0].name],{type:'text/html'});
-            var reader = new FileReader();
-            reader.onDrop = function () {
-                var b64 = reader.result.replace(/^data:.+;base64,/, '');
-                console.log(b64); 
-            }
+        
             // this.props.getBlob(b64);
 
             var blobPromise = new Promise((resolve, reject) => {
