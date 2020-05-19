@@ -15,15 +15,16 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions';
-var base64Img = require('base64-img')
+import DeleteIcon from '@material-ui/icons/Delete';
+import Appbar from './Appbar'
+
 
 // import * as firebase from 'firebase/app';
 
 
 const styles = theme => ({
     paper: {
-        marginTop: theme.spacing(0),
-        marginBottom: theme.spacing(0),
+        marginBottom: theme.spacing(2),
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -74,16 +75,7 @@ const styles = theme => ({
     }
 })
 
-// var firebaseConfig = {
-//     apiKey: "AIzaSyB99ZMQiexnzEjcTdgGug0ZfnOz968UYlc",
-//     authDomain: "memory-book-ecf89.firebaseapp.com",
-//     databaseURL: "https://memory-book-ecf89.firebaseio.com",
-//     projectId: "memory-book-ecf89",
-//     storageBucket: "memory-book-ecf89.appspot.com",
-//     messagingSenderId: "473816955063",
-//     appId: "1:473816955063:web:519e43801cd2acb5d0f532"
-//   };
-//   firebase.initializeApp(firebaseConfig);
+
 
 class Post extends React.Component {
     constructor(props) {
@@ -107,6 +99,7 @@ this.handleSubmit=this.handleSubmit.bind(this);
 this.generatePDF=this.generatePDF.bind(this);
 this.handleOpen=this.handleOpen.bind(this);
 this.getImageName=this.getImageName.bind(this);
+this.handleDelete=this.handleDelete.bind(this);
     }
 
     handleOpen() {
@@ -147,16 +140,7 @@ let pages= this.state.page.concat([this.state.count]);
 this.setState({page:pages});
       }
 
-    //   handleChange =  ( index , event)=> {
-    //     const { name, value } = event.target
-
-    //     let options = this.state.page;
-    //     options[index] = value;
-    //     this.setState({
-    //         page: options
-    //     })
-    //     console.log(this.state.page)
-    // }
+    
 
     handleSubmit(){
         const {count,image,title,description,imgData}=this.state;
@@ -205,18 +189,25 @@ var imgData;
 
     }
 
+    handleDelete(i){
+        let x=this.state.page;
+        
+        x.splice(i,1)
+        this.setState({x:i, count:this.state.count - 1, title:' ', description:' ',image:' '});
+    }
+
     render() {
         const { classes } = this.props;
         return (
             <div>
-
+{/* <Appbar /> */}
                 <Container maxWidth='sm' className={classes.contain1}>
                     <h2 style={{paddingTop:0}}>Create your own memory book here</h2>
                     <Paper  style={{ paddingBottom: '20px', paddingLeft: '10px', paddingRight: '10px'}}>
                         {this.state.page.map((option,index)=>(
                             <span key={index}>
                         <div className={classes.contain} >
-                            <Paper variant='outlined' style={{ width: "90%" }} >
+                            <Paper  variant='outlined' style={{ width: "90%" }} >
                                 <div>
                                     <DragAndDrop getImage={this.getImage} getImageName={this.getImageName}  />
                                 </div>
@@ -253,6 +244,13 @@ var imgData;
 
                                 </form>
                             </Paper>
+                            {this.state.count > 1 ? 
+                             <div style={{textAlign:"center"}}>
+                             <DeleteIcon onClick={()=> this.handleDelete(index)}/>
+                             </div> 
+                              : " "
+                              }
+                             
                         </div>
                         </span>
                         ))}
@@ -281,7 +279,8 @@ var imgData;
                                     onClick={this.handleOpen}
                                     style={{ fontSize: "12px", width: '90%' }}                  >
                                     Preview</Button>
-                                    </div>                         
+                                    </div>  
+                                                         
                     </Paper>
 
                 </Container>
@@ -296,11 +295,10 @@ var imgData;
                         
                     {this.state.productData.map((p)=>{
                         return(
-                            <Paper className={classes.paper}>
+                            <Paper className={classes.paper} elevation={4}>
                         <h1>{p.title}</h1>
                         <img src={`${p.image}`} maxWidth="200px" height="200px"></img>
                     <p style={{paddingLeft:'20px', paddingRight:'20px', textAlign:'justify'}}>{p.description}</p>
-                    <fotter>{p.pageNo}</fotter>
                     </Paper>
                     )
                     })}
