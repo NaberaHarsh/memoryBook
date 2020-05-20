@@ -67,6 +67,7 @@ class Front extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            uid:this.props.uid,
             image: "",
             title: "Memory Book",
             name: "",
@@ -91,8 +92,8 @@ class Front extends React.Component {
         })
     }
     handleSubmit() {
-        const { image, title, imgData,name } = this.state;
-        const userData = { image: image, title: title,name:name, imgData: imgData }
+        const { image, title, imgData,name,uid} = this.state;
+        const userData = {uid:this.props.uid , image: image, title: title,name:name, imgData: imgData}
 
         axios.post("http://localhost:8080/content", userData)
             .then((res) => {

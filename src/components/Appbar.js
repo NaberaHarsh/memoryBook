@@ -25,7 +25,7 @@ const styles = theme => ({
     marginRight: theme.spacing(2),
   },
   signOut: {
-    alignItem: 'right',
+    alignSelf:'flexEnd'
   },
   title: {
     flexGrow: 1,
@@ -75,10 +75,10 @@ class Appbar extends React.Component {
             <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
               <MenuIcon onClick={() => { this.showDrawer() }} variant="outline-light" />
             </IconButton>
-            <Typography variant="h6" className={classes.title}>
+            <Typography variant="h6" className={classes.title} style={{flex:1}}>
               Memory Book
           </Typography>
-            <div style={{ alignItems: "right" }}>
+            <div style={{ alignItems: "right" }} className={classes.signOut}>
               <Button edge="end" color="inherit" >{this.props.display}</Button>
             </div>
             <IconButton edge="end" className={classes.signOut} color="inherit" aria-label="menu">

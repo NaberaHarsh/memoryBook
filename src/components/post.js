@@ -81,6 +81,7 @@ class Post extends React.Component {
     constructor(props) {
         super();
         this.state = {
+            // uid:this.props.uid,
             imgData:" ",
             image: " ",
             title:" ",
@@ -103,7 +104,7 @@ this.handleDelete=this.handleDelete.bind(this);
     }
 
     handleOpen() {
-        axios.get('http://localhost:8080/getContent').then(response => {  
+        axios.get('http://localhost:8080/getContent/?uid='+this.props.uid).then(response => {  
             console.log(response.data);  
             this.setState({  
               productData: response.data  
@@ -144,7 +145,7 @@ this.setState({page:pages});
 
     handleSubmit(){
         const {count,image,title,description,imgData}=this.state;
-        const userData={pageNo:count,image:image,title:title,description:description,imgData:imgData}
+        const userData={uid:this.props.uid,pageNo:count,image:image,title:title,description:description,imgData:imgData}
     
     axios.post("http://localhost:8080/content",userData)
     .then((res)=>{
@@ -304,21 +305,27 @@ var imgData;
                     </DialogTitle>
                     <DialogContent dividers>
                     <div id="pdfdiv">
-                        
-                    {this.state.productData.map((p)=>{
-                        return(
-                            <Paper className={classes.paper} elevation={4}>
-                        <h1>{p.title}</h1>
-                        <img src={`${p.image}`} maxWidth="200px" height="200px"></img>
-                        {p.name ?
-                         <p style={{ textAlign:'center'}}>{`This book belongs to${p.name}`}</p>
-                        :
-                        <p style={{paddingLeft:'20px', paddingRight:'20px', textAlign:'justify'}}>{p.description}</p>
-
-                        }
-                    </Paper>
-                    )
-                    })}
+                        {this.state.productData ?
+                        this.state.productData.map((p)=>{
+                            return(
+                                <Paper className={classes.paper} elevation={4}>
+                            <h1>{p.title}</h1>
+                            <img src={`${p.image}`} maxWidth="200px" height="200px"></img>
+                            {p.name ?
+                             <p style={{ textAlign:'center'}}>{`This book belongs to ${p.name}`}</p>
+                            :
+                            <p style={{paddingLeft:'20px', paddingRight:'20px', textAlign:'justify'}}>{p.description}</p>
+    
+                            }
+                        </Paper>
+                        )
+                        })
+                        : 
+                        <Paper className={classes.paper} elevation={4}>
+                            <h4>No Pages created yet</h4>
+                        </Paper>
+                            }
+                    
                     
                 </div>
                     </DialogContent>

@@ -1,12 +1,13 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import Dashboard from './components/dashboard';
+
 import * as firebase from "firebase/app";
 import "firebase/auth";
 import Appbar from './components/Appbar'
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Route, Link, Redirect } from "react-router-dom";
 import Front from './components/Front';
+import Post from './components/post'
 
 var firebaseConfig = {
   apiKey: "AIzaSyB99ZMQiexnzEjcTdgGug0ZfnOz968UYlc",
@@ -24,7 +25,7 @@ class App extends React.Component{
   constructor(props){
     super(props);
     this.state={
-      UserLogged:" "
+      user:" "
     }
   }
 
@@ -72,14 +73,14 @@ componentDidMount(){
   firebase.auth().onAuthStateChanged((user) => {
     if (user) {
       this.setState({
-        UserLogged:user.uid
+        user:user.uid
       })
       this.setState({
           display:user.displayName
       })
       
       console.log("logged in",user.uid, user.displayName)
-      
+      console.log(this.state.user)
     } else {
        this.googleLogin()
     }
@@ -92,9 +93,9 @@ componentDidMount(){
   return (
       <Router>
       <Appbar display={this.state.display} logout={this.logout}/>
-      <Route path="/frontpage" component={Front} />
-     <Route path="/content" component={Dashboard} />
-     {/* <Redirect exact from="/" to="/frontpage" /> */}
+  <Route path="/frontpage" render={()=> <Front  uid={this.state.user} />} />
+     <Route path="/content" render={()=> <Post uid={this.state.user} />}/>
+     <Redirect exact from="/" to="/frontpage" />
      </Router>
   );
   }
