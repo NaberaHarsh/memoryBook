@@ -12,18 +12,20 @@ import MenuItem from "@material-ui/core/MenuItem";
 import PagesIcon from '@material-ui/icons/Pages';
 import MenuBookIcon from '@material-ui/icons/MenuBook';
 import Divider from "@material-ui/core/Divider";
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
 
-const drawerWidth = 40 ;
+
+const drawerWidth = 40;
 const styles = theme => ({
-    root: {
+  root: {
     width: "100%"
   },
   menuButton: {
     marginRight: theme.spacing(2),
   },
   signOut: {
-      alignItem:'right',
+    alignItem: 'right',
   },
   title: {
     flexGrow: 1,
@@ -37,81 +39,90 @@ const styles = theme => ({
   },
 });
 
-class Appbar extends React.Component{
-    constructor(props){
-        super(props);
-        this.state={
-        visible:false,
-        anchorEl: null,
-        mobileMoreAnchorEl: null,
-  
-        }
+class Appbar extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      visible: false,
+      anchorEl: null,
+      mobileMoreAnchorEl: null,
+
     }
+  }
 
-    showDrawer = () => {
-        this.setState({
-            visible: true,
-        });
-    };
+  showDrawer = () => {
+    this.setState({
+      visible: true,
+    });
+  };
 
-    onClose = () => {
-        this.setState({
-            visible: false,
-        });
-    };
+  onClose = () => {
+    this.setState({
+      visible: false,
+    });
+  };
 
-    render(){
-        const { mobileMoreAnchorEl } = this.state;
-   
+  render() {
+    const { mobileMoreAnchorEl } = this.state;
+
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
-  const classes = this.props;
+    const classes = this.props;
 
-  return (
-    <div className={classes.root}>
-      <AppBar position="static">
-        <Toolbar>
-          <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
-            <MenuIcon  onClick={()=>{this.showDrawer()} } variant="outline-light"/>
-          </IconButton>
-          <Typography variant="h6" className={classes.title}>
-            Memory Book
+    return (
+      <div className={classes.root}>
+        <AppBar position="absolute">
+          <Toolbar>
+            <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
+              <MenuIcon onClick={() => { this.showDrawer() }} variant="outline-light" />
+            </IconButton>
+            <Typography variant="h6" className={classes.title}>
+              Memory Book
           </Typography>
-          <div style={{alignItems:"right"}}>
-  <Button edge="end" color="inherit" >{this.props.display}</Button>
-          </div>
-          <IconButton edge="end" className={classes.signOut} color="inherit" aria-label="menu">
-          <PowerSettingsNewIcon onClick={this.props.logout} />
-          </IconButton>
+            <div style={{ alignItems: "right" }}>
+              <Button edge="end" color="inherit" >{this.props.display}</Button>
+            </div>
+            <IconButton edge="end" className={classes.signOut} color="inherit" aria-label="menu">
+              <PowerSettingsNewIcon onClick={this.props.logout} />
+            </IconButton>
 
-        </Toolbar>
-      </AppBar>
+          </Toolbar>
+        </AppBar>
 
-      <SwipeableDrawer
-classes={{
-    paper: classes.drawerPaper
-  }}        anchorEl={mobileMoreAnchorEl}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-        transformOrigin={{ vertical: "top", horizontal: "right" }}
-        open={this.state.visible}
-        onClose={this.onClose}
-      >
+        <SwipeableDrawer
+          classes={{
+            paper: classes.drawerPaper
+          }} anchorEl={mobileMoreAnchorEl}
+          anchorOrigin={{ vertical: "top", horizontal: "right" }}
+          transformOrigin={{ vertical: "top", horizontal: "right" }}
+          open={this.state.visible}
+          onClose={this.onClose}
+        >
           <MenuItem>
-          <span style={{textAlign:"center", paddingLeft:"20px", paddingRight:'20px', fontSize:"20px", backgroundColor:'primary'}}> Memory Dashboard</span>
+            <span style={{ textAlign: "center", paddingLeft: "20px", paddingRight: '20px', fontSize: "20px", backgroundColor: 'primary' }}> Memory Dashboard</span>
           </MenuItem>
           <Divider />
-                                    <MenuItem style={{ paddingTop:'20px'}}>
-<PagesIcon />
-<span style={{fontSize:"18px", paddingLeft:'20px' }}>Front Page</span>
-                                    </MenuItem>
-                                    <MenuItem>
-<MenuBookIcon />
-<span style={{fontSize:"18px", paddingLeft:'20px'}}>Content</span>
-                                    </MenuItem>
-                                </SwipeableDrawer>
 
-    </div>
-  );
-}
+          <Link to="/frontPage" style={{ textDecoration: 'none', color: 'black' }}>
+
+            <MenuItem style={{ paddingTop: '20px' }} onClick={this.onClose}>
+              <PagesIcon />
+
+              <span style={{ fontSize: "18px", paddingLeft: '20px' }}>Front Page</span>
+
+            </MenuItem>
+          </Link>
+
+          <Link to="/content" style={{ textDecoration: 'none', color: 'black' }}>
+            <MenuItem onClick={this.onClose}>
+              <MenuBookIcon />
+              <span style={{ fontSize: "18px", paddingLeft: '20px' }}>Content</span>
+            </MenuItem>
+          </Link>
+        </SwipeableDrawer>
+
+      </div>
+    );
+  }
 }
 
 export default withStyles(styles)(Appbar);

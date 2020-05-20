@@ -170,19 +170,29 @@ var imgData;
                 return(
 <div >
     {imgData=p.imgData}
-{splitTitle = pdf.splitTextToSize(p.description,200)}
+    
+{p.name ? 
+<>
+{pdf.setFontSize(36)}
+{pdf.text(p.title,pdf.internal.pageSize.getWidth()/2,20,{align:"center"})}
+{pdf.addImage(imgData,45,40,120,110,{align:"center"},)}
+{pdf.setFontSize(24)}
+{pdf.text(`This book belongs to ${p.name}`,pdf.internal.pageSize.getWidth()/2,170,{align:"center"})}
+</>
+: 
+<>
 {pdf.setFontSize(24)}
 {pdf.text(p.title,pdf.internal.pageSize.getWidth()/2,15,{align:"center"})}
-{pdf.addImage(imgData,65,30,80,60,{align:"center"},)}
+{pdf.addImage(imgData,55,30,100,70,{align:"center"},)}
+{splitTitle = pdf.splitTextToSize(p.description,200)}
 {pdf.setFontSize(14)}
-{pdf.text(splitTitle,15,110,{maxWidth: 180, align:"justify"})}
+{pdf.text(splitTitle,15,120,{maxWidth: 180, align:"justify"})}
+</>
+}
 {pdf.addPage()}
 </div>
 
-  )
-                
-                
-                
+  )   
             })}  
             pdf.save("download.pdf");  
           });
@@ -200,9 +210,11 @@ var imgData;
         const { classes } = this.props;
         return (
             <div>
-{/* <Appbar /> */}
+                <br />
+                <br />
+                <br />
                 <Container maxWidth='sm' className={classes.contain1}>
-                    <h2 style={{paddingTop:0}}>Create your own memory book here</h2>
+                    <h2 style={{paddingTop:0 , textAlign:'center'}} >Create your own memory book here</h2>
                     <Paper  style={{ paddingBottom: '20px', paddingLeft: '10px', paddingRight: '10px'}}>
                         {this.state.page.map((option,index)=>(
                             <span key={index}>
@@ -298,7 +310,12 @@ var imgData;
                             <Paper className={classes.paper} elevation={4}>
                         <h1>{p.title}</h1>
                         <img src={`${p.image}`} maxWidth="200px" height="200px"></img>
-                    <p style={{paddingLeft:'20px', paddingRight:'20px', textAlign:'justify'}}>{p.description}</p>
+                        {p.name ?
+                         <p style={{ textAlign:'center'}}>{`This book belongs to${p.name}`}</p>
+                        :
+                        <p style={{paddingLeft:'20px', paddingRight:'20px', textAlign:'justify'}}>{p.description}</p>
+
+                        }
                     </Paper>
                     )
                     })}

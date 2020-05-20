@@ -5,6 +5,8 @@ import Dashboard from './components/dashboard';
 import * as firebase from "firebase/app";
 import "firebase/auth";
 import Appbar from './components/Appbar'
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import Front from './components/Front';
 
 var firebaseConfig = {
   apiKey: "AIzaSyB99ZMQiexnzEjcTdgGug0ZfnOz968UYlc",
@@ -88,10 +90,12 @@ componentDidMount(){
   render(){
 
   return (
-    <div>
+      <Router>
       <Appbar display={this.state.display} logout={this.logout}/>
-     <Dashboard />
-    </div>
+      <Route path="/frontpage" component={Front} />
+     <Route path="/content" component={Dashboard} />
+     {/* <Redirect exact from="/" to="/frontpage" /> */}
+     </Router>
   );
   }
 }
