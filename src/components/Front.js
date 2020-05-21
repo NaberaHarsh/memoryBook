@@ -8,14 +8,14 @@ import { Button, Grid } from '@material-ui/core';
 import CopyrightIcon from '@material-ui/icons/Copyright';
 import axios from 'axios';
 
-
 const styles = theme => ({
     paper: {
         marginBottom: theme.spacing(2),
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        width: 400
+        width:"100%"
+    
 
     },
     contain1: {
@@ -57,7 +57,7 @@ const styles = theme => ({
         marginTop: theme.spacing(2),
         display: "flex",
         flexDirection: "column",
-        alignItems: "initial"
+        alignItems: "center"
 
     }
 })
@@ -109,7 +109,7 @@ class Front extends React.Component {
             <br />
             <br />
             <br />
-            <Container maxWidth='sm' className={classes.contain1}>
+            <Container component="main" maxWidth='sm' className={classes.contain1}>
                 <h2 style={{ paddingTop: 0, textAlign: "center" }}>Front Page</h2>
                 <Paper style={{ paddingBottom: '20px', paddingLeft: '10px', paddingRight: '10px' }}>
 
@@ -150,6 +150,11 @@ class Front extends React.Component {
                 </Paper>
 
             </Container>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <CopyrightIcon /><span style={{verticalAlign:"super"}}>harshnabera</span>
             </div>
         )
     }

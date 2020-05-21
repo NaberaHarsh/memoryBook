@@ -19,13 +19,10 @@ import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 const drawerWidth = 40;
 const styles = theme => ({
   root: {
-    width: "100%"
+    flexGrow: 1
   },
   menuButton: {
     marginRight: theme.spacing(2),
-  },
-  signOut: {
-    alignSelf:'flexEnd'
   },
   title: {
     flexGrow: 1,
@@ -37,6 +34,8 @@ const styles = theme => ({
   drawerPaper: {
     width: 400
   },
+  
+  
 });
 
 class Appbar extends React.Component {
@@ -70,18 +69,18 @@ class Appbar extends React.Component {
 
     return (
       <div className={classes.root}>
-        <AppBar position="absolute">
-          <Toolbar>
+        <AppBar position="fixed" >
+          <Toolbar >
             <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
               <MenuIcon onClick={() => { this.showDrawer() }} variant="outline-light" />
             </IconButton>
             <Typography variant="h6" className={classes.title} style={{flex:1}}>
               Memory Book
           </Typography>
-            <div style={{ alignItems: "right" }} className={classes.signOut}>
+            <div style={{ alignItems: "right" }} >
               <Button edge="end" color="inherit" >{this.props.display}</Button>
             </div>
-            <IconButton edge="end" className={classes.signOut} color="inherit" aria-label="menu">
+            <IconButton edge="end"  color="inherit" aria-label="menu">
               <PowerSettingsNewIcon onClick={this.props.logout} />
             </IconButton>
 

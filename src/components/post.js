@@ -58,6 +58,11 @@ const styles = theme => ({
 
 
     },
+    form:{
+        width: "100%",
+        marginTop: theme.spacing(0),
+
+    },
     inputRoot: {
         fontSize: 14
     },
@@ -212,10 +217,10 @@ var imgData;
         return (
             <div>
                 <br />
-                <br />
-                <br />
-                <Container maxWidth='sm' className={classes.contain1}>
-                    <h2 style={{paddingTop:0 , textAlign:'center'}} >Create your own memory book here</h2>
+            <br />
+            <br />
+                <Container component="main" maxWidth='sm' className={classes.contain1}>
+                    <h2 style={{paddingTop:0 , textAlign:'center'}} >Create your own memory book</h2>
                     <Paper  style={{ paddingBottom: '20px', paddingLeft: '10px', paddingRight: '10px'}}>
                         {this.state.page.map((option,index)=>(
                             <span key={index}>
@@ -224,7 +229,9 @@ var imgData;
                                 <div>
                                     <DragAndDrop getImage={this.getImage} getImageName={this.getImageName}  />
                                 </div>
-                                <form>
+                                <form
+                                className={classes.form}
+                                >
                                     
                                 <TextField
           id="title"
