@@ -72,11 +72,10 @@ class ImageUpload extends React.Component {
     console.log(res.data);
     this.props.getImageName(res.data)
 
-    // this.props.getImage(res.data)
+    this.props.getImage(res.data)
   })
             
             // this.props.firebaseImage(accepted);
-            this.props.getImage(accepted[0].preview);
           
         
             // this.props.getBlob(b64);

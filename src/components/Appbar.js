@@ -13,10 +13,10 @@ import PagesIcon from '@material-ui/icons/Pages';
 import MenuBookIcon from '@material-ui/icons/MenuBook';
 import Divider from "@material-ui/core/Divider";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import CopyrightIcon from '@material-ui/icons/Copyright';
 
 
 
-const drawerWidth = 40;
 const styles = theme => ({
   root: {
     flexGrow: 1
@@ -112,11 +112,18 @@ class Appbar extends React.Component {
           </Link>
 
           <Link to="/content" style={{ textDecoration: 'none', color: 'black' }}>
-            <MenuItem onClick={this.onClose}>
+            <MenuItem onClick={this.onClose} >
               <MenuBookIcon />
               <span style={{ fontSize: "18px", paddingLeft: '20px' }}>Content</span>
             </MenuItem>
           </Link>
+          <div style={{flex: 1,  flexDirection: 'column',justifyContent: 'space-between'}}></div>
+          <Divider />
+          <MenuItem >
+              <CopyrightIcon />
+              <span style={{ fontSize: "18px", paddingLeft: '0px' }}>harshnabera</span>
+            </MenuItem>
+
         </SwipeableDrawer>
 
       </div>

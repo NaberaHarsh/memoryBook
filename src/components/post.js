@@ -92,12 +92,13 @@ class Post extends React.Component {
             title:" ",
             description:" ",
             open:false,
-            count:1,
+            count:2,
             page:[{
                 title:[],
                 description:[]
             }],
-            productData:[]
+            productData:[],
+            errors:{image:'',title:'',description:''},
 
         }
         this.getImage = this.getImage.bind(this);
@@ -106,6 +107,7 @@ this.generatePDF=this.generatePDF.bind(this);
 this.handleOpen=this.handleOpen.bind(this);
 this.getImageName=this.getImageName.bind(this);
 this.handleDelete=this.handleDelete.bind(this);
+this.deletePage=this.deletePage.bind(this);
     }
 
     handleOpen() {
@@ -121,7 +123,6 @@ this.handleDelete=this.handleDelete.bind(this);
 
     handleClose = () => {
         this.setState({ open: false })
-        // this.props.forTab(this.props.unit)
 
     };
 
@@ -140,23 +141,55 @@ this.handleDelete=this.handleDelete.bind(this);
         })
     }
     addPage= e =>{
+        const {count,image,title,description,imgData}=this.state;
+        let errors={image:'',title:'',description:''};
+
+        if(!image)
+        {errors.image= "Image is required"}
+        if(!title){
+            errors.title="Title is required"
+        }
+        if(!description){
+            errors.description="Description is required"
+        }
+            this.setState({errors});
+
+        if(image){
+        if(title){
+        if(description){
         this.setState({ count: this.state.count + 1 })
         e.preventDefault()
 let pages= this.state.page.concat([this.state.count]);
 this.setState({page:pages});
-      }
+      }}}
+    }
 
     
 
     handleSubmit(){
+        let errors={image:'',title:'',description:''};
         const {count,image,title,description,imgData}=this.state;
         const userData={uid:this.props.uid,pageNo:count,image:image,title:title,description:description,imgData:imgData}
-    
+
+        if(!image)
+        {errors.image= "Image is required"}
+        if(!title){
+            errors.title="Title is required"
+        }
+        if(!description){
+            errors.description="Description is required"
+        }
+            this.setState({errors});
+
+        if(image){
+        if(title){
+        if(description){
     axios.post("http://localhost:8080/content",userData)
     .then((res)=>{
         console.log(res);
         console.log("hello");
     })
+}}}
     }
 
    
@@ -181,9 +214,9 @@ var imgData;
 <>
 {pdf.setFontSize(36)}
 {pdf.text(p.title,pdf.internal.pageSize.getWidth()/2,20,{align:"center"})}
-{pdf.addImage(imgData,45,40,120,110,{align:"center"},)}
+{pdf.addImage(imgData,60,40,90,150,{align:"center"},)}
 {pdf.setFontSize(24)}
-{pdf.text(`This book belongs to ${p.name}`,pdf.internal.pageSize.getWidth()/2,170,{align:"center"})}
+{pdf.text(`This book belongs to ${p.name}`,pdf.internal.pageSize.getWidth()/2,210,{align:"center"})}
 </>
 : 
 <>
@@ -212,8 +245,23 @@ var imgData;
         this.setState({x:i, count:this.state.count - 1, title:' ', description:' ',image:' '});
     }
 
+    deletePage(p){
+        let x=this.state.productData;
+console.log(x[p]._id);
+        axios.delete('http://localhost:8080/deletePage/'+x[p]._id)
+        .then((res)=>{
+            console.log(res.data)
+        })
+        x.splice(p,1);
+        this.setState({
+            productData:x
+        })
+    }
+
     render() {
         const { classes } = this.props;
+        const {errors} = this.state;
+        const { image ,title,description } = this.state;
         return (
             <div>
                 <br />
@@ -228,6 +276,8 @@ var imgData;
                             <Paper  variant='outlined' style={{ width: "90%" }} >
                                 <div>
                                     <DragAndDrop getImage={this.getImage} getImageName={this.getImageName}  />
+                                    {errors.image !== '' && <span style={{color: "red"}}>{this.state.errors.image}</span>}
+                                    <span style={{fontSize:'12px'}}>(Insert your photo in landscape mode only)</span>
                                 </div>
                                 <form
                                 className={classes.form}
@@ -236,7 +286,7 @@ var imgData;
                                 <TextField
           id="title"
           margin="normal"
-          required
+          required={true}
           label="Title"
           fullWidth
           autoComplete="title"
@@ -245,10 +295,11 @@ var imgData;
         //   value={title}
           onChange={(e)=>this.handleChange(e,index)}
         />
+         {errors.title !== '' && <span style={{color: "red"}}>{this.state.errors.title}</span>}
         <TextField
           id="description"
           margin="normal"
-          required
+          required={true}
           label="Description"
           fullWidth
           autoComplete="description"
@@ -260,17 +311,12 @@ var imgData;
           onChange={(e)=>this.handleChange(e,index)}
 
         />
+        {errors.description !== '' && <span style={{color: "red"}}>{this.state.errors.description}</span>}
         
 
                                 </form>
                             </Paper>
-                            {this.state.count > 1 ? 
-                             <div style={{textAlign:"center"}}>
-                             <DeleteIcon onClick={()=> this.handleDelete(index)}/>
-                             </div> 
-                              : " "
-                              }
-                             
+                                                         
                         </div>
                         </span>
                         ))}
@@ -305,25 +351,27 @@ var imgData;
 
                 </Container>
                 
-                <CopyrightIcon /><span style={{verticalAlign:"super"}}>harshnabera</span>
+               <footer> <CopyrightIcon /><span style={{verticalAlign:"super"}}>harshnabera</span></footer>
                 <Dialog onClose={this.handleClose} className={classes.root} aria-labelledby="customized-dialog-title" open={this.state.open}>
                     <DialogTitle id="customized-dialog-title" onClose={this.handleClose}>
                         Your memory book
                     </DialogTitle>
                     <DialogContent dividers>
                     <div id="pdfdiv">
-                        {this.state.productData ?
-                        this.state.productData.map((p)=>{
+                        {this.state.productData!= null ?
+                        this.state.productData.map((p,i)=>{
                             return(
                                 <Paper className={classes.paper} elevation={4}>
                             <h1>{p.title}</h1>
-                            <img src={`${p.image}`} maxWidth="200px" height="200px"></img>
+                            <img src={p.imgData} maxWidth="200px" height="200px"></img>
                             {p.name ?
                              <p style={{ textAlign:'center'}}>{`This book belongs to ${p.name}`}</p>
                             :
                             <p style={{paddingLeft:'20px', paddingRight:'20px', textAlign:'justify'}}>{p.description}</p>
     
                             }
+                             <DeleteIcon onClick={()=> this.deletePage(i)}/>
+
                         </Paper>
                         )
                         })

@@ -7,6 +7,8 @@ import TextField from '@material-ui/core/TextField';
 import { Button, Grid } from '@material-ui/core';
 import CopyrightIcon from '@material-ui/icons/Copyright';
 import axios from 'axios';
+import { Redirect } from "react-router-dom";
+
 
 const styles = theme => ({
     paper: {
@@ -71,6 +73,8 @@ class Front extends React.Component {
             image: "",
             title: "Memory Book",
             name: "",
+            pageNo:1,
+            errors:{image:'',name:""}
         }
         this.getImage = this.getImage.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -92,18 +96,32 @@ class Front extends React.Component {
         })
     }
     handleSubmit() {
-        const { image, title, imgData,name,uid} = this.state;
-        const userData = {uid:this.props.uid , image: image, title: title,name:name, imgData: imgData}
+        let errors= {image:'', description:''};
+        const { image,pageNo, title, imgData,name,uid} = this.state;
+        const userData = {uid:this.props.uid ,pageNo:pageNo, image: image, title: title,name:name, imgData: imgData}
 
+        if(!image)
+        {errors.image= "Image is required"}
+        if(!name){
+            errors.name="Name is required"
+        }
+
+        this.setState({errors});
+        if(image){
+        if(name){
         axios.post("http://localhost:8080/content", userData)
             .then((res) => {
                 console.log(res);
+                              
             })
+            
+        }}
     }
 
     render() {
         const { classes } = this.props;
-
+const {errors} = this.state;
+const {image, name}=this.state;
         return (
             <div>
             <br />
@@ -117,6 +135,8 @@ class Front extends React.Component {
                         <Paper variant='outlined' style={{ width: "90%" }} >
                             <div>
                                 <DragAndDrop getImage={this.getImage} getImageName={this.getImageName} />
+                                {errors.image != '' && <span style={{color: "red"}}>{this.state.errors.image}</span>}
+                                <span style={{fontSize:'12px'}}>(Insert your photo in potrait mode only)</span>
                             </div>
                             <form>
 
@@ -135,16 +155,19 @@ class Front extends React.Component {
                                     onChange={(e) => this.handleChange(e)}
 
                                 />
+                                    {errors.name != '' && <span style={{color: "red"}}>{this.state.errors.name}</span>}
 
 
                             </form>
                         </Paper>
                     </div>
                     <div style={{ textAlign: "center", paddingTop: '10px' }}>
+                    {/* <Link to="/content" style={{ textDecoration: 'none', color: 'black' }}> */}
                         <Button variant='contained' color='primary'
                             onClick={this.handleSubmit}
                             style={{ fontSize: "12px", width: '90%' }}                  >
                             Submit</Button>
+                            {/* </Link> */}
                     </div>
 
                 </Paper>
