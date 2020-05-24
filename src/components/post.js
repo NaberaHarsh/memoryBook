@@ -214,7 +214,7 @@ var imgData;
 <>
 {pdf.setFontSize(36)}
 {pdf.text(p.title,pdf.internal.pageSize.getWidth()/2,20,{align:"center"})}
-{pdf.addImage(imgData,60,40,90,150,{align:"center"},)}
+{pdf.addImage(imgData,55,40,100,150,{align:"center"},)}
 {pdf.setFontSize(24)}
 {pdf.text(`This book belongs to ${p.name}`,pdf.internal.pageSize.getWidth()/2,210,{align:"center"})}
 </>
@@ -358,7 +358,7 @@ console.log(x[p]._id);
                     </DialogTitle>
                     <DialogContent dividers>
                     <div id="pdfdiv">
-                        {this.state.productData!= null ?
+                        {this.state.productData ?
                         this.state.productData.map((p,i)=>{
                             return(
                                 <Paper className={classes.paper} elevation={4}>

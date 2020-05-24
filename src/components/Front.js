@@ -7,8 +7,11 @@ import TextField from '@material-ui/core/TextField';
 import { Button, Grid } from '@material-ui/core';
 import CopyrightIcon from '@material-ui/icons/Copyright';
 import axios from 'axios';
-import { Redirect } from "react-router-dom";
-
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import Dialog from '@material-ui/core/Dialog';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogActions from '@material-ui/core/DialogActions';
 
 const styles = theme => ({
     paper: {
@@ -74,14 +77,21 @@ class Front extends React.Component {
             title: "Memory Book",
             name: "",
             pageNo:1,
+            open:false,
             errors:{image:'',name:""}
         }
         this.getImage = this.getImage.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.getImageName = this.getImageName.bind(this);
-
+        
     }
 
+    handleOpen(){
+        this.setState({open:true});
+    }
+    handleClose(){
+        this.setState({open:false});
+    }
     getImage(image) {
         this.setState({ image: image })
     }
@@ -112,7 +122,7 @@ class Front extends React.Component {
         axios.post("http://localhost:8080/content", userData)
             .then((res) => {
                 console.log(res);
-                              
+                  this.handleOpen();            
             })
             
         }}
@@ -178,6 +188,14 @@ const {image, name}=this.state;
             <br/>
             <br/>
             <CopyrightIcon /><span style={{verticalAlign:"super"}}>harshnabera</span>
+            <Dialog onClose={this.handleClose} className={classes.root} aria-labelledby="customized-dialog-title" open={this.state.open}>
+<DialogContent>Submitted successfully</DialogContent>
+<DialogActions style={{textAlign:'center'}}>
+  <Link to="/content" style={{ textDecoration: 'none', color: 'black' }}>
+    <Button  color='primary'>Okay</Button>
+    </Link>
+</DialogActions>
+            </Dialog>
             </div>
         )
     }
