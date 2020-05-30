@@ -8,6 +8,7 @@ import Appbar from './components/Appbar'
 import { BrowserRouter as Router, Route, Link, Redirect } from "react-router-dom";
 import Front from './components/Front';
 import Post from './components/post'
+import Dashboard from './components/dashboard';
 
 var firebaseConfig = {
   apiKey: "AIzaSyB99ZMQiexnzEjcTdgGug0ZfnOz968UYlc",
@@ -82,7 +83,10 @@ componentDidMount(){
       console.log("logged in",user.uid, user.displayName)
       console.log(this.state.user)
     } else {
-       this.googleLogin()
+      this.setState({
+        display:"LOGIN"
+    })
+    this.googleLogin();
     }
   });
 }
@@ -92,10 +96,11 @@ componentDidMount(){
 
   return (
       <Router>
-      <Appbar display={this.state.display} logout={this.logout}/>
+      <Appbar display={this.state.display} logout={this.logout} login={this.googleLogin}/>
+      <Route path="/dashboard" render={()=> <Dashboard />} />
   <Route path="/frontpage" render={()=> <Front  uid={this.state.user} />} />
      <Route path="/content" render={()=> <Post uid={this.state.user} />}/>
-     <Redirect exact from="/" to="/frontpage" />
+     <Redirect exact from="/" to="/dashboard" />
      </Router>
   );
   }

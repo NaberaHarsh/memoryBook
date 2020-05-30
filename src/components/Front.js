@@ -119,7 +119,7 @@ class Front extends React.Component {
         this.setState({errors});
         if(image){
         if(name){
-        axios.post("http://localhost:8080/content", userData)
+        axios.post("/content", userData)
             .then((res) => {
                 console.log(res);
                   this.handleOpen();            

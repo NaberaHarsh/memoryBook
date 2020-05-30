@@ -63,7 +63,7 @@ class ImageUpload extends React.Component {
             console.log(accepted[0])
     let fd = new FormData()
   fd.append("file",accepted[0])
-   axios.post('http://localhost:8080/profile',fd,{headers:{
+   axios.post('/profile',fd,{headers:{
     'Content-Type': "multipart/form-data"
   }}).then((res)=>{
     this.setState({

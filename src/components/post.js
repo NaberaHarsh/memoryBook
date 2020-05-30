@@ -17,6 +17,8 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Appbar from './Appbar'
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Backdrop from '@material-ui/core/Backdrop';
 
 
 // import * as firebase from 'firebase/app';
@@ -77,7 +79,11 @@ const styles = theme => ({
         flexDirection: "column",
         alignItems: "initial"
 
-    }
+    },
+    backdrop: {
+        zIndex: theme.zIndex.drawer + 1,
+        color: '#fff',
+      },
 })
 
 
@@ -92,6 +98,8 @@ class Post extends React.Component {
             title:" ",
             description:" ",
             open:false,
+            preview:false,
+            display:false,
             count:2,
             page:[{
                 title:[],
@@ -108,21 +116,39 @@ this.handleOpen=this.handleOpen.bind(this);
 this.getImageName=this.getImageName.bind(this);
 this.handleDelete=this.handleDelete.bind(this);
 this.deletePage=this.deletePage.bind(this);
+this.open=this.open.bind(this);
+this.close=this.close.bind(this);
+this.openProgress=this.openProgress.bind(this);
     }
 
+    openProgress = () => {
+        this.setState({display: ! this.state.display});
+      };
+    
+
     handleOpen() {
-        axios.get('http://localhost:8080/getContent/?uid='+this.props.uid).then(response => {  
+        this.openProgress();
+        axios.get('/getContent/?uid='+this.props.uid).then(response => {  
             console.log(response.data);  
             this.setState({  
               productData: response.data  
             });  
             this.setState({ open: true })
           });
+
         
     }
 
     handleClose = () => {
         this.setState({ open: false })
+        this.setState({display:false});
+    };
+    open = () => {
+        this.setState({ preview:true })
+
+    };
+    close = () => {
+        this.setState({ preview: false })
 
     };
 
@@ -143,6 +169,7 @@ this.deletePage=this.deletePage.bind(this);
     addPage= e =>{
         const {count,image,title,description,imgData}=this.state;
         let errors={image:'',title:'',description:''};
+        const userData={uid:this.props.uid,pageNo:count,image:image,title:title,description:description,imgData:imgData}
 
         if(!image)
         {errors.image= "Image is required"}
@@ -157,8 +184,12 @@ this.deletePage=this.deletePage.bind(this);
         if(image){
         if(title){
         if(description){
+            e.preventDefault()
+
+            axios.post("/content",userData)
+            .then((res)=>{
+            })
         this.setState({ count: this.state.count + 1 })
-        e.preventDefault()
 let pages= this.state.page.concat([this.state.count]);
 this.setState({page:pages});
       }}}
@@ -184,10 +215,9 @@ this.setState({page:pages});
         if(image){
         if(title){
         if(description){
-    axios.post("http://localhost:8080/content",userData)
+    axios.post("/content",userData)
     .then((res)=>{
-        console.log(res);
-        console.log("hello");
+        this.open();
     })
 }}}
     }
@@ -233,7 +263,7 @@ var imgData;
 
   )   
             })}  
-            pdf.save("download.pdf");  
+            pdf.save("MemoryBook.pdf");  
           });
 
     }
@@ -248,7 +278,7 @@ var imgData;
     deletePage(p){
         let x=this.state.productData;
 console.log(x[p]._id);
-        axios.delete('http://localhost:8080/deletePage/'+x[p]._id)
+        axios.delete('/deletePage/'+x[p]._id)
         .then((res)=>{
             console.log(res.data)
         })
@@ -268,7 +298,7 @@ console.log(x[p]._id);
             <br />
             <br />
                 <Container component="main" maxWidth='sm' className={classes.contain1}>
-                    <h2 style={{paddingTop:0 , textAlign:'center'}} >Create your own memory book</h2>
+                    <h2 style={{paddingTop:0 , textAlign:'center'}} >Create your memory book here</h2>
                     <Paper  style={{ paddingBottom: '20px', paddingLeft: '10px', paddingRight: '10px'}}>
                         {this.state.page.map((option,index)=>(
                             <span key={index}>
@@ -325,7 +355,7 @@ console.log(x[p]._id);
                             <Grid md={6} lg={6} sm={6} xs={6}>
                             <div style={{textAlign:"center"}}>
                         <Button variant='contained' color='primary'
-                                    onClick={(e)=>{this.addPage(e) ; this.handleSubmit(e)}}
+                                    onClick={(e)=>{this.addPage(e) }}
                                     style={{ fontSize: "12px", width: '80%' }}                  >
                                  Add new page</Button>
                                     {/* <br/> */}
@@ -352,6 +382,17 @@ console.log(x[p]._id);
                 </Container>
                 
                <footer> <CopyrightIcon /><span style={{verticalAlign:"super"}}>harshnabera</span></footer>
+
+               
+                <Dialog onClose={this.close} className={classes.root} aria-labelledby="customized-dialog-title" open={this.state.preview}>
+<DialogContent>Submitted successfully</DialogContent>
+<DialogActions style={{textAlign:'center'}}>
+    <Button onClick={this.close} color='primary'>Okay</Button>
+</DialogActions>
+            </Dialog>
+            <Backdrop className={classes.backdrop} open={this.state.display} onClick={this.handleClose}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
                 <Dialog onClose={this.handleClose} className={classes.root} aria-labelledby="customized-dialog-title" open={this.state.open}>
                     <DialogTitle id="customized-dialog-title" onClose={this.handleClose}>
                         Your memory book
@@ -401,7 +442,7 @@ console.log(x[p]._id);
                         </Grid>
                     </DialogActions>
                 </Dialog>
-
+                
             </div>
         )
     }

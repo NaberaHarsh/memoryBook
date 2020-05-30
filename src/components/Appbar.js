@@ -14,7 +14,7 @@ import MenuBookIcon from '@material-ui/icons/MenuBook';
 import Divider from "@material-ui/core/Divider";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import CopyrightIcon from '@material-ui/icons/Copyright';
-
+import HomeIcon from '@material-ui/icons/Home';
 
 
 const styles = theme => ({
@@ -78,12 +78,15 @@ class Appbar extends React.Component {
               Memory Book
           </Typography>
             <div style={{ alignItems: "right" }} >
-              <Button edge="end" color="inherit" >{this.props.display}</Button>
+              <Button edge="end" color="inherit" onClick={this.props.login} >{this.props.display}</Button>
             </div>
+            {this.props.display == 'LOGIN'
+            ? ""
+            :
             <IconButton edge="end"  color="inherit" aria-label="menu">
               <PowerSettingsNewIcon onClick={this.props.logout} />
             </IconButton>
-
+  }
           </Toolbar>
         </AppBar>
 
@@ -101,9 +104,19 @@ class Appbar extends React.Component {
           </MenuItem>
           <Divider />
 
+          <Link to="/dashboard" style={{ textDecoration: 'none', color: 'black' }}>
+
+          <MenuItem style={{ paddingTop: '20px' }} onClick={this.onClose}>
+              <HomeIcon />
+
+              <span style={{ fontSize: "18px", paddingLeft: '20px' }}>Home </span>
+
+            </MenuItem>
+            </Link>
+
           <Link to="/frontPage" style={{ textDecoration: 'none', color: 'black' }}>
 
-            <MenuItem style={{ paddingTop: '20px' }} onClick={this.onClose}>
+            <MenuItem  onClick={this.onClose}>
               <PagesIcon />
 
               <span style={{ fontSize: "18px", paddingLeft: '20px' }}>Front Page</span>
@@ -114,7 +127,7 @@ class Appbar extends React.Component {
           <Link to="/content" style={{ textDecoration: 'none', color: 'black' }}>
             <MenuItem onClick={this.onClose} >
               <MenuBookIcon />
-              <span style={{ fontSize: "18px", paddingLeft: '20px' }}>Content</span>
+              <span style={{ fontSize: "18px", paddingLeft: '20px' }}>Contents</span>
             </MenuItem>
           </Link>
           <div style={{flex: 1,  flexDirection: 'column',justifyContent: 'space-between'}}></div>
